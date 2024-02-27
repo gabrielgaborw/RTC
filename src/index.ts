@@ -1,37 +1,21 @@
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
-import { MessageDataSource } from './data-source';
-import { Message } from './entity/Message';
+import messageRoutes from './routes/messageRoute';
+import { handleSocketConnection } from './services/messageService';
+import path from 'path';
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const messageRepository = MessageDataSource.getRepository(Message)
+app.use(express.static(path.join(__dirname, '../public')));
+app.use('/msg', messageRoutes);
 
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
-  });
+handleSocketConnection(io);
 
-io.on('connection', (socket) => {
-    console.log('a user connected');
+const PORT = process.env.PORT || 3000;
 
-    socket.on('disconnect', () => {
-        console.log('user disconnected');
-    });
-
-    socket.on('chat message', async (msg: string) => {
-        const newMsg = new Message();
-        newMsg.message = msg;
-        newMsg.postedAt = new Date(Date.now());
-        await messageRepository.save(newMsg);
-        const allUsers = await messageRepository.find();
-        console.log(allUsers);
-        io.emit('chat message', msg);
-    });
-});
-
-server.listen(3000, () => {
-    console.log('listening on *:3000');
+server.listen(PORT, () => {
+    console.log(`Server listening on PORT: ${PORT}`);
 });
