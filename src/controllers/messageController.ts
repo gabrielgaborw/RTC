@@ -1,10 +1,10 @@
 import express, {Request, Response} from "express";
 import router from "../routes/messageRoute";
 import { Message } from "../entity/Message";
-import { MessageDataSource } from "../data-source";
+import { RTCDataSource } from "../data-source";
 
 export const getAllMessages = async (req: Request, res: Response) => {
-    const messageRepository = MessageDataSource.getRepository(Message);
+    const messageRepository = RTCDataSource.getRepository(Message);
 
     try {
         const messages = await messageRepository.find();
@@ -16,7 +16,7 @@ export const getAllMessages = async (req: Request, res: Response) => {
 }
 
 export const createMessage = async (req: Request, res: Response) => {
-    const messageRepository = MessageDataSource.getRepository(Message);
+    const messageRepository = RTCDataSource.getRepository(Message);
 
     try {
         let msg = new Message();

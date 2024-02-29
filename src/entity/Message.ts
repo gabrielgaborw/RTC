@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { User } from "./User"
 
 @Entity()
 export class Message {
@@ -10,4 +11,7 @@ export class Message {
 
     @Column()
     postedAt: Date
+
+    @ManyToOne(() => User, (user) => user.messages)
+    author: User
 }
